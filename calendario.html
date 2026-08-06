@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calendario de tareas – 6 al 21 de agosto</title>
+<style>
+  :root{
+    --bg:#f4f6fa;
+    --card:#ffffff;
+    --text:#1e2430;
+    --muted:#6b7280;
+    --line:#e3e7ef;
+    --accent:#2563eb;
+    --ok:#16a34a;
+    --shadow:0 1px 3px rgba(16,24,40,.08),0 8px 24px rgba(16,24,40,.05);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    padding:0 0 60px;
+    background:var(--bg);
+    color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5;
+  }
+  header{
+    background:linear-gradient(135deg,#1e3a8a,#2563eb);
+    color:#fff;
+    padding:28px 20px 24px;
+    box-shadow:var(--shadow);
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:0 16px}
+  header h1{margin:0 0 4px;font-size:1.6rem;letter-spacing:-.02em}
+  header p{margin:0;opacity:.85;font-size:.95rem}
+
+  .progress-box{
+    margin-top:18px;
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.22);
+    border-radius:12px;
+    padding:14px 16px;
+  }
+  .progress-line{display:flex;justify-content:space-between;align-items:baseline;font-size:.9rem;margin-bottom:8px}
+  .progress-line strong{font-size:1.25rem}
+  .bar{height:10px;border-radius:99px;background:rgba(255,255,255,.25);overflow:hidden}
+  .bar > span{display:block;height:100%;width:0;background:#4ade80;border-radius:99px;transition:width .25s ease}
+
+  .toolbar{
+    max-width:960px;margin:18px auto 0;padding:0 16px;
+    display:flex;gap:10px;flex-wrap:wrap;
+  }
+  .toolbar button{
+    font:inherit;font-size:.85rem;
+    padding:8px 14px;border-radius:9px;
+    border:1px solid var(--line);background:#fff;color:var(--text);
+    cursor:pointer;box-shadow:var(--shadow);
+  }
+  .toolbar button:hover{border-color:var(--accent);color:var(--accent)}
+
+  main{max-width:960px;margin:20px auto 0;padding:0 16px;display:grid;gap:16px}
+
+  .day{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .day.done{border-color:#bbf7d0}
+  .day-head{
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+    padding:14px 18px;border-bottom:1px solid var(--line);
+    background:#fbfcfe;
+  }
+  .day-date{font-weight:700;font-size:1.05rem}
+  .day-dow{color:var(--muted);font-size:.85rem;text-transform:capitalize}
+  .day-count{margin-left:auto;font-size:.8rem;color:var(--muted);white-space:nowrap}
+  .mini-bar{width:100%;height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:2px}
+  .mini-bar > span{display:block;height:100%;width:0;background:var(--ok);transition:width .2s ease}
+  .day-progress{flex-basis:120px;flex-grow:0}
+
+  ul{list-style:none;margin:0;padding:8px 10px}
+  li{border-radius:10px}
+  li + li{margin-top:2px}
+  label{
+    display:flex;align-items:flex-start;gap:12px;
+    padding:10px 10px;border-radius:10px;cursor:pointer;
+  }
+  label:hover{background:#f6f8fc}
+  input[type=checkbox]{
+    width:20px;height:20px;margin:1px 0 0;flex:none;cursor:pointer;accent-color:var(--accent);
+  }
+  .task-text{display:flex;flex-direction:column}
+  .task-subject{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+  .task-name{font-size:.98rem}
+  input:checked ~ .task-text .task-name{text-decoration:line-through;color:var(--muted)}
+  input:checked ~ .task-text .task-subject{opacity:.55}
+
+  .tag{
+    display:inline-block;margin-left:8px;padding:1px 8px;border-radius:99px;
+    font-size:.68rem;font-weight:700;letter-spacing:.03em;vertical-align:middle;
+  }
+  .tag.urgente{background:#fee2e2;color:#b91c1c}
+  .tag.examen{background:#ede9fe;color:#6d28d9}
+
+  footer{
+    text-align:center;color:var(--muted);font-size:.85rem;margin-top:32px;
+  }
+
+  @media (max-width:560px){
+    header h1{font-size:1.3rem}
+    .day-count{margin-left:0;width:100%}
+    .day-progress{flex-basis:100%}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>Calendario de tareas – 6 al 21 de agosto</h1>
+    <p>Plan de estudio distribuido · 51 actividades en 16 días</p>
+    <div class="progress-box">
+      <div class="progress-line">
+        <span>Progreso general</span>
+        <span><strong id="pct">0%</strong> &nbsp;<span id="frac">(0 / 0)</span></span>
+      </div>
+      <div class="bar"><span id="barFill"></span></div>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <button type="button" id="btnReset">Reiniciar progreso</button>
+  <button type="button" id="btnToday">Ir a hoy</button>
+</div>
+
+<main id="calendario"></main>
+
+<footer>Powered by Yasser G. ⚡</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var STORAGE_KEY = "calendario-agosto-2026";
+
+  // Distribución: ~3-4 actividades por día, respetando los totales por materia.
+  // Totales -> Derecho 2 | Contabilidad 30 | Finanzas 2: 8 | Estadística 3 | Ética 8 = 51
+  var PLAN = [
+    { fecha:"2026-08-06", tareas:[
+      { m:"Estadística 1", t:"Cuestionario", tag:"urgente" },
+      { m:"Contabilidad de costos", t:"Tarea 1" },
+      { m:"Contabilidad de costos", t:"Tarea 2" },
+      { m:"Ética profesional", t:"Evaluación 1" }
+    ]},
+    { fecha:"2026-08-07", tareas:[
+      { m:"Estadística 1", t:"Taller (límite hoy)", tag:"urgente" },
+      { m:"Contabilidad de costos", t:"Tarea 3" },
+      { m:"Contabilidad de costos", t:"Evaluación 1" },
+      { m:"Ética profesional", t:"Evaluación 2" }
+    ]},
+    { fecha:"2026-08-08", tareas:[
+      { m:"Estadística 1", t:"Parcial 2 (límite hoy)", tag:"examen" },
+      { m:"Contabilidad de costos", t:"Tarea 4" },
+      { m:"Contabilidad de costos", t:"Evaluación 2" },
+      { m:"Ética profesional", t:"Evaluación 3" }
+    ]},
+    { fecha:"2026-08-09", tareas:[
+      { m:"Contabilidad de costos", t:"Tarea 5" },
+      { m:"Contabilidad de costos", t:"Evaluación 3" },
+      { m:"Ética profesional", t:"Evaluación 4" }
+    ]},
+    { fecha:"2026-08-10", tareas:[
+      { m:"Derecho fiscal y laboral", t:"Parcial", tag:"examen" },
+      { m:"Contabilidad de costos", t:"Tarea 6" },
+      { m:"Contabilidad de costos", t:"Evaluación 4" },
+      { m:"Finanzas 2", t:"Asignación 1" }
+    ]},
+    { fecha:"2026-08-11", tareas:[
+      { m:"Contabilidad de costos", t:"Tarea 7" },
+      { m:"Contabilidad de costos", t:"Evaluación 5" },
+      { m:"Finanzas 2", t:"Asignación 2" },
+      { m:"Ética profesional", t:"Evaluación 5" }
+    ]},
+    { fecha:"2026-08-12", tareas:[
+      { m:"Contabilidad de costos", t:"Parcial 1", tag:"examen" },
+      { m:"Contabilidad de costos", t:"Tarea 8" },
+      { m:"Contabilidad de costos", t:"Evaluación 6" },
+      { m:"Finanzas 2", t:"Quiz" }
+    ]},
+    { fecha:"2026-08-13", tareas:[
+      { m:"Contabilidad de costos", t:"Tarea 9" },
+      { m:"Contabilidad de costos", t:"Evaluación 7" },
+      { m:"Finanzas 2", t:"Asignación 3" },
+      { m:"Ética profesional", t:"Evaluación 6" }
+    ]},
+    { fecha:"2026-08-14", tareas:[
+      { m:"Contabilidad de costos", t:"Tarea 10" },
+      { m:"Contabilidad de costos", t:"Evaluación 8" },
+      { m:"Finanzas 2", t:"Asignación 4" },
+      { m:"Ética profesional", t:"Evaluación 7" }
+    ]},
+    { fecha:"2026-08-15", tareas:[
+      { m:"Contabilidad de costos", t:"Tarea 11" },
+      { m:"Contabilidad de costos", t:"Evaluación 9" },
+      { m:"Finanzas 2", t:"Caso de estudio" }
+    ]},
+    { fecha:"2026-08-16", tareas:[
+      { m:"Contabilidad de costos", t:"Tarea 12" },
+      { m:"Contabilidad de costos", t:"Evaluación 10" },
+      { m:"Finanzas 2", t:"Asignación 5" }
+    ]},
+    { fecha:"2026-08-17", tareas:[
+      { m:"Contabilidad de costos", t:"Tarea 13" },
+      { m:"Contabilidad de costos", t:"Evaluación 11" },
+      { m:"Finanzas 2", t:"Asignación 6" }
+    ]},
+    { fecha:"2026-08-18", tareas:[
+      { m:"Contabilidad de costos", t:"Tarea 14" },
+      { m:"Contabilidad de costos", t:"Caso de estudio" }
+    ]},
+    { fecha:"2026-08-19", tareas:[
+      { m:"Contabilidad de costos", t:"Parcial 2", tag:"examen" },
+      { m:"Derecho fiscal y laboral", t:"Actividad final" }
+    ]},
+    { fecha:"2026-08-20", tareas:[
+      { m:"Contabilidad de costos", t:"Parcial 3", tag:"examen" },
+      { m:"Ética profesional", t:"Examen final", tag:"examen" }
+    ]},
+    { fecha:"2026-08-21", tareas:[
+      { m:"Contabilidad de costos", t:"Evaluación final", tag:"examen" }
+    ]}
+  ];
+
+  var DIAS = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+  var MESES = ["enero","febrero","marzo","abril","mayo","junio","julio",
+               "agosto","septiembre","octubre","noviembre","diciembre"];
+
+  function estado(){
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+    catch(e){ return {}; }
+  }
+  function guardar(obj){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); } catch(e){}
+  }
+
+  var hechas = estado();
+  var contenedor = document.getElementById("calendario");
+  var total = 0;
+
+  PLAN.forEach(function(dia){
+    // Fecha en local, sin desfase de zona horaria
+    var p = dia.fecha.split("-");
+    var d = new Date(+p[0], +p[1] - 1, +p[2]);
+
+    var card = document.createElement("section");
+    card.className = "day";
+    card.id = "dia-" + dia.fecha;
+
+    var head = document.createElement("div");
+    head.className = "day-head";
+    head.innerHTML =
+      '<span class="day-date">' + d.getDate() + " de " + MESES[d.getMonth()] + '</span>' +
+      '<span class="day-dow">' + DIAS[d.getDay()] + '</span>' +
+      '<span class="day-count" data-count></span>' +
+      '<span class="day-progress"><span class="mini-bar"><span data-mini></span></span></span>';
+    card.appendChild(head);
+
+    var ul = document.createElement("ul");
+
+    dia.tareas.forEach(function(tarea, i){
+      total++;
+      var id = dia.fecha + "|" + i;
+
+      var li = document.createElement("li");
+      var label = document.createElement("label");
+
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.dataset.id = id;
+      cb.checked = !!hechas[id];
+
+      var txt = document.createElement("span");
+      txt.className = "task-text";
+      txt.innerHTML =
+        '<span class="task-subject">' + tarea.m + '</span>' +
+        '<span class="task-name">' + tarea.t +
+        (tarea.tag ? '<span class="tag ' + tarea.tag + '">' +
+          (tarea.tag === "urgente" ? "urgente" : "examen") + '</span>' : '') +
+        '</span>';
+
+      label.appendChild(cb);
+      label.appendChild(txt);
+      li.appendChild(label);
+      ul.appendChild(li);
+    });
+
+    card.appendChild(ul);
+    contenedor.appendChild(card);
+  });
+
+  var barFill = document.getElementById("barFill");
+  var pctEl = document.getElementById("pct");
+  var fracEl = document.getElementById("frac");
+
+  function actualizar(){
+    var hechasCount = 0;
+
+    Array.prototype.forEach.call(contenedor.querySelectorAll(".day"), function(card){
+      var cbs = card.querySelectorAll('input[type=checkbox]');
+      var n = cbs.length, ok = 0;
+      Array.prototype.forEach.call(cbs, function(cb){ if(cb.checked) ok++; });
+      hechasCount += ok;
+
+      var pctDia = n ? Math.round(ok * 100 / n) : 0;
+      card.querySelector("[data-count]").textContent = ok + " / " + n + " · " + pctDia + "%";
+      card.querySelector("[data-mini]").style.width = pctDia + "%";
+      card.classList.toggle("done", n > 0 && ok === n);
+    });
+
+    var pct = total ? Math.round(hechasCount * 100 / total) : 0;
+    pctEl.textContent = pct + "%";
+    fracEl.textContent = "(" + hechasCount + " / " + total + ")";
+    barFill.style.width = pct + "%";
+  }
+
+  contenedor.addEventListener("change", function(ev){
+    var cb = ev.target;
+    if(!cb || cb.type !== "checkbox") return;
+    if(cb.checked) hechas[cb.dataset.id] = true;
+    else delete hechas[cb.dataset.id];
+    guardar(hechas);
+    actualizar();
+  });
+
+  document.getElementById("btnReset").addEventListener("click", function(){
+    if(!confirm("¿Desmarcar todas las actividades?")) return;
+    hechas = {};
+    guardar(hechas);
+    Array.prototype.forEach.call(
+      contenedor.querySelectorAll('input[type=checkbox]'),
+      function(cb){ cb.checked = false; }
+    );
+    actualizar();
+  });
+
+  document.getElementById("btnToday").addEventListener("click", function(){
+    var hoy = new Date();
+    var iso = hoy.getFullYear() + "-" +
+              String(hoy.getMonth() + 1).padStart(2, "0") + "-" +
+              String(hoy.getDate()).padStart(2, "0");
+    var card = document.getElementById("dia-" + iso) || contenedor.firstElementChild;
+    if(card) card.scrollIntoView({ behavior:"smooth", block:"start" });
+  });
+
+  actualizar();
+})();
+</script>
+
+</body>
+</html>
