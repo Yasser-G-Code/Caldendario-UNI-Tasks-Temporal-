@@ -39,11 +39,10 @@
   .bar{height:10px;border-radius:99px;background:rgba(255,255,255,.25);overflow:hidden}
   .bar > span{display:block;height:100%;width:0;background:#4ade80;border-radius:99px;transition:width .25s ease}
 
-  /* ---- Panel de filtros ---- */
+  /* ---- Panel de filtros y acciones ---- */
   .filtros{
     max-width:1000px;margin:18px auto 0;padding:14px 16px;
-    background:var(--card);border:1px solid var(--line);border-radius:14px;
-    box-shadow:var(--shadow);
+    background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);
   }
   .filtro-fila{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
   .filtro-fila:last-of-type{margin-bottom:0}
@@ -69,8 +68,37 @@
     border:1px solid var(--line);background:#fff;color:var(--text);cursor:pointer;
   }
   .acciones button:hover{border-color:var(--accent);color:var(--accent)}
+  .acciones button.primario{background:var(--accent);border-color:var(--accent);color:#fff}
+  .acciones button.primario:hover{filter:brightness(1.08);color:#fff}
   .hint{font-size:.78rem;color:var(--muted)}
   #resultado{font-size:.82rem;font-weight:600;color:var(--accent)}
+
+  /* ---- Formulario de nueva actividad ---- */
+  .nueva{
+    max-width:1000px;margin:12px auto 0;padding:16px;
+    background:var(--card);border:1px solid var(--accent);border-radius:14px;
+    box-shadow:var(--shadow);display:none;
+  }
+  .nueva.abierta{display:block}
+  .nueva h2{margin:0 0 12px;font-size:1rem}
+  .campos{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+  .campo{display:flex;flex-direction:column;gap:4px}
+  .campo label{
+    font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;
+    font-weight:700;color:var(--muted);padding:0;cursor:default;
+  }
+  .campo input,.campo select{
+    font:inherit;font-size:.9rem;padding:8px 10px;
+    border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--text);width:100%;
+  }
+  .campo input:focus,.campo select:focus{outline:2px solid #bfdbfe;border-color:var(--accent)}
+  .nueva-pie{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+  .nueva-pie button{
+    font:inherit;font-size:.85rem;padding:8px 16px;border-radius:9px;cursor:pointer;
+    border:1px solid var(--line);background:#fff;color:var(--text);
+  }
+  .nueva-pie button.primario{background:var(--ok);border-color:var(--ok);color:#fff;font-weight:600}
+  #avisoForm{font-size:.82rem;color:#b91c1c;font-weight:600}
 
   main{max-width:1000px;margin:16px auto 0;padding:0 16px;display:grid;gap:16px}
 
@@ -108,9 +136,10 @@
   li + li{margin-top:2px}
   li.dragging{opacity:.4}
   li.drop-target{box-shadow:inset 0 2px 0 var(--accent)}
-  /* Resaltado del filtro */
   li.apagada{opacity:.28}
   li.resaltada{background:#fffbeb;box-shadow:0 0 0 2px #fbbf24 inset;opacity:1}
+  li.nueva-tarea{background:#f0fdf4}
+  li.nueva-tarea.resaltada{background:#fffbeb}
 
   .handle{
     flex:none;cursor:grab;color:#c3c9d6;font-size:1rem;line-height:1;
@@ -133,28 +162,37 @@
   input:checked ~ .task-text .task-subject,
   input:checked ~ .task-text .tipo{opacity:.5}
 
-  /* ---- Distintivo por tipo de actividad ---- */
   .tipo{
     display:inline-block;padding:1px 9px;border-radius:6px;
     font-size:.68rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
     border:1px solid transparent;white-space:nowrap;
   }
-  .t-tarea      {background:#dbeafe;color:#1d4ed8;border-color:#bfdbfe}
-  .t-evaluacion {background:#fef3c7;color:#b45309;border-color:#fde68a}
-  .t-asignacion {background:#ccfbf1;color:#0f766e;border-color:#99f6e4}
-  .t-parcial    {background:#ede9fe;color:#6d28d9;border-color:#ddd6fe}
-  .t-final      {background:#fee2e2;color:#b91c1c;border-color:#fecaca}
-  .t-caso       {background:#fce7f3;color:#be185d;border-color:#fbcfe8}
-  .t-quiz       {background:#cffafe;color:#0e7490;border-color:#a5f3fc}
-  .t-taller     {background:#dcfce7;color:#15803d;border-color:#bbf7d0}
+  .t-tarea       {background:#dbeafe;color:#1d4ed8;border-color:#bfdbfe}
+  .t-evaluacion  {background:#fef3c7;color:#b45309;border-color:#fde68a}
+  .t-asignacion  {background:#ccfbf1;color:#0f766e;border-color:#99f6e4}
+  .t-parcial     {background:#ede9fe;color:#6d28d9;border-color:#ddd6fe}
+  .t-final       {background:#fee2e2;color:#b91c1c;border-color:#fecaca}
+  .t-caso        {background:#fce7f3;color:#be185d;border-color:#fbcfe8}
+  .t-quiz        {background:#cffafe;color:#0e7490;border-color:#a5f3fc}
+  .t-taller      {background:#dcfce7;color:#15803d;border-color:#bbf7d0}
   .t-cuestionario{background:#e0e7ff;color:#4338ca;border-color:#c7d2fe}
+  .t-laboratorio {background:#ffedd5;color:#c2410c;border-color:#fed7aa}
+  .t-proyecto    {background:#f3e8ff;color:#7e22ce;border-color:#e9d5ff}
+  .t-lectura     {background:#f1f5f9;color:#475569;border-color:#e2e8f0}
+  .t-otro        {background:#e5e7eb;color:#374151;border-color:#d1d5db}
 
   .mover{
     flex:none;font:inherit;font-size:.75rem;color:var(--muted);
     border:1px solid var(--line);border-radius:8px;background:#fff;
-    padding:5px 6px;margin-right:6px;cursor:pointer;max-width:130px;
+    padding:5px 6px;cursor:pointer;max-width:130px;
   }
   .mover:hover{border-color:var(--accent);color:var(--accent)}
+  .borrar{
+    flex:none;font:inherit;font-size:1rem;line-height:1;color:#c3c9d6;
+    border:none;background:none;cursor:pointer;padding:6px 8px;border-radius:8px;
+  }
+  .borrar:hover{color:#b91c1c;background:#fee2e2}
+  .espacio{flex:none;width:30px}
 
   footer{text-align:center;color:var(--muted);font-size:.85rem;margin-top:32px}
 
@@ -163,7 +201,7 @@
     .day-count{margin-left:0;width:100%}
     .day-progress{flex-basis:100%}
     .filtro-tit{width:100%}
-    .mover{max-width:88px}
+    .mover{max-width:84px}
   }
 </style>
 </head>
@@ -172,7 +210,7 @@
 <header>
   <div class="wrap">
     <h1>Calendario de tareas – 6 al 21 de agosto</h1>
-    <p>Plan de estudio distribuido · 51 actividades en 16 días</p>
+    <p id="subtitulo">Plan de estudio distribuido</p>
     <div class="progress-box">
       <div class="progress-line">
         <span>Progreso general</span>
@@ -184,18 +222,50 @@
 </header>
 
 <section class="filtros">
-  <div class="filtro-fila" id="filtroTipo">
-    <span class="filtro-tit">Tipo</span>
-  </div>
-  <div class="filtro-fila" id="filtroMateria">
-    <span class="filtro-tit">Materia</span>
-  </div>
+  <div class="filtro-fila" id="filtroTipo"><span class="filtro-tit">Tipo</span></div>
+  <div class="filtro-fila" id="filtroMateria"><span class="filtro-tit">Materia</span></div>
   <div class="acciones">
+    <button type="button" id="btnNueva" class="primario">+ Añadir actividad</button>
     <button type="button" id="btnLimpiar">Quitar filtros</button>
     <button type="button" id="btnToday">Ir a hoy</button>
     <button type="button" id="btnOrden">Restaurar orden sugerido</button>
     <span id="resultado"></span>
     <span class="hint">Arrastra las tareas entre días o usa el selector de fecha de cada tarea.</span>
+  </div>
+</section>
+
+<section class="nueva" id="panelNueva">
+  <h2>Nueva actividad</h2>
+  <div class="campos">
+    <div class="campo">
+      <label for="nvNombre">Nombre de la actividad</label>
+      <input type="text" id="nvNombre" placeholder="Ej: Tarea 15 – costos indirectos" maxlength="90">
+    </div>
+    <div class="campo">
+      <label for="nvMateria">Materia</label>
+      <select id="nvMateria"></select>
+    </div>
+    <div class="campo" id="campoMateriaNueva" style="display:none">
+      <label for="nvMateriaTexto">Nombre de la materia nueva</label>
+      <input type="text" id="nvMateriaTexto" placeholder="Ej: Mercadeo 1" maxlength="45">
+    </div>
+    <div class="campo">
+      <label for="nvTipo">Tipo</label>
+      <select id="nvTipo"></select>
+    </div>
+    <div class="campo">
+      <label for="nvDia">Día en que la haré</label>
+      <select id="nvDia"></select>
+    </div>
+    <div class="campo">
+      <label for="nvLimite">Fecha límite (opcional)</label>
+      <input type="date" id="nvLimite">
+    </div>
+  </div>
+  <div class="nueva-pie">
+    <button type="button" class="primario" id="btnGuardarNueva">Añadir al calendario</button>
+    <button type="button" id="btnCancelarNueva">Cancelar</button>
+    <span id="avisoForm"></span>
   </div>
 </section>
 
@@ -210,10 +280,11 @@
   var KEY_DONE   = "calendario-agosto-2026-hechas";
   var KEY_LAYOUT = "calendario-agosto-2026-orden";
   var KEY_VER    = "calendario-agosto-2026-version";
+  var KEY_EXTRA  = "calendario-agosto-2026-extras";
 
   // Al cambiar la distribución sugerida se sube esta versión: el orden guardado
-  // se reemplaza por el nuevo plan. Las actividades marcadas NO se tocan,
-  // porque viven en otra clave y se identifican por id, no por fecha.
+  // se reemplaza por el nuevo plan. Las actividades marcadas y las añadidas por
+  // el usuario NO se pierden: viven en otras claves y se identifican por id.
   var PLAN_VERSION = 2;
 
   var FECHAS = [
@@ -225,19 +296,21 @@
   var DIAS  = ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
   var MESES = ["enero","febrero","marzo","abril","mayo","junio","julio",
                "agosto","septiembre","octubre","noviembre","diciembre"];
-  var MES_C = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
 
-  // Tipos de actividad (clase de color + etiqueta visible)
   var TIPOS = {
-    tarea:       { et:"Tarea",       cls:"t-tarea" },
-    evaluacion:  { et:"Evaluación",  cls:"t-evaluacion" },
-    asignacion:  { et:"Asignación",  cls:"t-asignacion" },
-    parcial:     { et:"Parcial",     cls:"t-parcial" },
-    final:       { et:"Final",       cls:"t-final" },
-    caso:        { et:"Caso",        cls:"t-caso" },
-    quiz:        { et:"Quiz",        cls:"t-quiz" },
-    taller:      { et:"Taller",      cls:"t-taller" },
-    cuestionario:{ et:"Cuestionario",cls:"t-cuestionario" }
+    tarea:        { et:"Tarea",        cls:"t-tarea" },
+    evaluacion:   { et:"Evaluación",   cls:"t-evaluacion" },
+    asignacion:   { et:"Asignación",   cls:"t-asignacion" },
+    parcial:      { et:"Parcial",      cls:"t-parcial" },
+    final:        { et:"Final",        cls:"t-final" },
+    caso:         { et:"Caso",         cls:"t-caso" },
+    quiz:         { et:"Quiz",         cls:"t-quiz" },
+    taller:       { et:"Taller",       cls:"t-taller" },
+    cuestionario: { et:"Cuestionario", cls:"t-cuestionario" },
+    laboratorio:  { et:"Laboratorio",  cls:"t-laboratorio" },
+    proyecto:     { et:"Proyecto",     cls:"t-proyecto" },
+    lectura:      { et:"Lectura",      cls:"t-lectura" },
+    otro:         { et:"Otro",         cls:"t-otro" }
   };
 
   var DER = "Derecho fiscal y laboral",
@@ -245,16 +318,16 @@
       F2  = "Finanzas 2",
       ES  = "Estadística 1",
       ET  = "Ética profesional";
+  var MATERIAS_BASE = [ES, CC, F2, DER, ET];
 
-  // Fechas límite conocidas por materia
   var LIM_CC = "2026-08-23";   // Contabilidad de costos: todo el 23 de agosto
   var LIM_F2 = "2026-08-22";   // Finanzas 2: todo el 22 de agosto
 
-  // Catálogo. El id es fijo: al mover una tarea de día conserva su estado.
-  // Totales -> Derecho 2 | Contabilidad 30 | Finanzas 8 | Estadística 3 | Ética 8 = 51
+  // Catálogo base. El id es fijo: al mover una tarea de día conserva su estado.
   var TAREAS = {};
-  function def(id, m, t, tipo, limite){
-    TAREAS[id] = { id:id, m:m, t:t, tipo:tipo, limite:limite || null };
+  function def(id, m, t, tipo, limite, custom, dia){
+    TAREAS[id] = { id:id, m:m, t:t, tipo:tipo, limite:limite || null,
+                   custom:!!custom, dia:dia || null };
   }
 
   def("der-parcial", DER, "Parcial", "parcial", null);
@@ -279,9 +352,7 @@
   for (var e = 1; e <= 7; e++) def("et-eval-" + e, ET, "Evaluación " + e, "evaluacion", null);
   def("et-final", ET, "Examen final", "final", null);
 
-  // Distribución sugerida: lo que vence dentro del rango se hace al menos
-  // un día antes de su fecha límite (taller vence el 7 -> se hace el 6,
-  // parcial 2 vence el 8 -> se hace el 7).
+  // Lo que vence dentro del rango se hace al menos un día antes de su límite.
   var ORDEN_SUGERIDO = {
     "2026-08-06": ["es-cuestionario","es-taller","cc-tarea-1","et-eval-1"],
     "2026-08-07": ["es-parcial-2","cc-tarea-2","cc-tarea-3","cc-eval-1"],
@@ -314,8 +385,17 @@
   }
   function clonar(o){ return JSON.parse(JSON.stringify(o)); }
 
-  // Garantiza que cada tarea aparezca exactamente una vez; repara sin perder
-  // los cambios que el usuario ya hizo.
+  // Actividades añadidas por el usuario
+  var extras = leer(KEY_EXTRA, []);
+  if(!Array.isArray(extras)) extras = [];
+  extras.forEach(function(x){
+    if(x && x.id && !TAREAS[x.id]){
+      def(x.id, x.m, x.t, TIPOS[x.tipo] ? x.tipo : "otro", x.limite, true, x.dia);
+    }
+  });
+
+  // Cada tarea debe aparecer exactamente una vez. Lo que falte vuelve a su día:
+  // las base al día sugerido, las añadidas al día que eligió el usuario.
   function sanear(layout){
     var limpio = {}, vistos = {};
     FECHAS.forEach(function(f){
@@ -329,6 +409,13 @@
         if(!vistos[id]){ vistos[id] = true; limpio[f].push(id); }
       });
     });
+    Object.keys(TAREAS).forEach(function(id){
+      if(vistos[id]) return;
+      var t = TAREAS[id];
+      var destino = (t.dia && limpio[t.dia]) ? t.dia : FECHAS[0];
+      vistos[id] = true;
+      limpio[destino].push(id);
+    });
     return limpio;
   }
 
@@ -339,42 +426,54 @@
   try { verGuardada = +localStorage.getItem(KEY_VER); } catch(e){}
 
   if(verGuardada !== PLAN_VERSION){
-    // Plan nuevo: se adopta la distribución sugerida actualizada
-    layout = clonar(ORDEN_SUGERIDO);
+    layout = sanear(clonar(ORDEN_SUGERIDO));
     escribir(KEY_LAYOUT, layout);
     try { localStorage.setItem(KEY_VER, String(PLAN_VERSION)); } catch(e){}
   } else {
     layout = sanear(leer(KEY_LAYOUT, clonar(ORDEN_SUGERIDO)));
   }
 
-  var TOTAL = Object.keys(TAREAS).length;
-
-  var filtroTipo = "";     // "" = todos
-  var filtroMateria = "";  // "" = todas
+  var filtroTipo = "", filtroMateria = "";
 
   var contenedor = document.getElementById("calendario");
-  var barFill  = document.getElementById("barFill");
-  var pctEl    = document.getElementById("pct");
-  var fracEl   = document.getElementById("frac");
-  var resultado= document.getElementById("resultado");
+  var barFill   = document.getElementById("barFill");
+  var pctEl     = document.getElementById("pct");
+  var fracEl    = document.getElementById("frac");
+  var resultado = document.getElementById("resultado");
+  var subtitulo = document.getElementById("subtitulo");
 
   function fparse(iso){ var p = iso.split("-"); return new Date(+p[0], +p[1]-1, +p[2]); }
   function etiquetaFecha(iso){
     var d = fparse(iso);
-    return { dia:d.getDate(), mes:MESES[d.getMonth()], dow:DIAS[d.getDay()], corta:d.getDate()+" "+MES_C[d.getMonth()] };
+    return { dia:d.getDate(), mes:MESES[d.getMonth()], dow:DIAS[d.getDay()] };
+  }
+  function fechaLarga(iso){
+    var d = fparse(iso);
+    return d.getDate() + " de " + MESES[d.getMonth()] +
+           (d.getFullYear() !== 2026 ? " de " + d.getFullYear() : "");
+  }
+  function materias(){
+    var vistas = {}, lista = MATERIAS_BASE.slice();
+    lista.forEach(function(m){ vistas[m] = true; });
+    Object.keys(TAREAS).forEach(function(id){
+      var m = TAREAS[id].m;
+      if(!vistas[m]){ vistas[m] = true; lista.push(m); }
+    });
+    return lista;
   }
 
   // ---- Construcción del DOM ------------------------------------------------
 
   function crearItem(id, fechaDia){
     var tarea = TAREAS[id];
-    var tipo  = TIPOS[tarea.tipo];
+    var tipo  = TIPOS[tarea.tipo] || TIPOS.otro;
 
     var li = document.createElement("li");
     li.draggable = true;
     li.dataset.id = id;
     li.dataset.tipo = tarea.tipo;
     li.dataset.materia = tarea.m;
+    if(tarea.custom) li.classList.add("nueva-tarea");
 
     var handle = document.createElement("span");
     handle.className = "handle";
@@ -388,15 +487,31 @@
     cb.dataset.id = id;
     cb.checked = !!hechas[id];
 
-    var txt = document.createElement("span");
+    var txt  = document.createElement("span");
     txt.className = "task-text";
-    txt.innerHTML =
-      '<span class="task-top">' +
-        '<span class="tipo ' + tipo.cls + '">' + tipo.et + '</span>' +
-        '<span class="task-subject">' + tarea.m + '</span>' +
-      '</span>' +
-      '<span class="task-name">' + tarea.t + '</span>' +
-      '<span class="task-limite" data-limite></span>';
+
+    var fila = document.createElement("span");
+    fila.className = "task-top";
+    var bTipo = document.createElement("span");
+    bTipo.className = "tipo " + tipo.cls;
+    bTipo.textContent = tipo.et;
+    var bMat = document.createElement("span");
+    bMat.className = "task-subject";
+    bMat.textContent = tarea.m;
+    fila.appendChild(bTipo);
+    fila.appendChild(bMat);
+
+    var nombre = document.createElement("span");
+    nombre.className = "task-name";
+    nombre.textContent = tarea.t;
+
+    var lim = document.createElement("span");
+    lim.className = "task-limite";
+    lim.setAttribute("data-limite", "");
+
+    txt.appendChild(fila);
+    txt.appendChild(nombre);
+    txt.appendChild(lim);
 
     label.appendChild(cb);
     label.appendChild(txt);
@@ -415,10 +530,23 @@
     li.appendChild(handle);
     li.appendChild(label);
     li.appendChild(sel);
+
+    if(tarea.custom){
+      var del = document.createElement("button");
+      del.type = "button";
+      del.className = "borrar";
+      del.title = "Eliminar esta actividad añadida";
+      del.textContent = "×";
+      del.addEventListener("click", function(){ eliminarExtra(id); });
+      li.appendChild(del);
+    } else {
+      var hueco = document.createElement("span");
+      hueco.className = "espacio";
+      li.appendChild(hueco);
+    }
     return li;
   }
 
-  // Texto de fecha límite + aviso si queda programada demasiado cerca del cierre
   function pintarLimite(li, fechaDia){
     var tarea = TAREAS[li.dataset.id];
     var el = li.querySelector("[data-limite]");
@@ -428,16 +556,17 @@
       el.textContent = "(sin fecha límite informada)";
       return;
     }
-    var lim = etiquetaFecha(tarea.limite);
     var dias = Math.round((fparse(tarea.limite) - fparse(fechaDia)) / 86400000);
+    var base = "(límite: " + fechaLarga(tarea.limite);
 
-    el.textContent = "(límite: " + lim.dia + " de " + lim.mes + ")";
     if(dias <= 0){
-      el.textContent = "(límite: " + lim.dia + " de " + lim.mes + " · ⚠ va justa o tarde)";
+      el.textContent = base + " · ⚠ va justa o tarde)";
       el.classList.add("tarde");
     } else if(dias === 1){
-      el.textContent = "(límite: " + lim.dia + " de " + lim.mes + " · un día antes ✓)";
+      el.textContent = base + " · un día antes ✓)";
       el.classList.add("pronto");
+    } else {
+      el.textContent = base + ")";
     }
   }
 
@@ -475,7 +604,7 @@
   // ---- Progreso ------------------------------------------------------------
 
   function actualizar(){
-    var completas = 0;
+    var completas = 0, total = 0;
 
     Array.prototype.forEach.call(contenedor.querySelectorAll(".day"), function(card){
       var fecha = card.dataset.fecha;
@@ -484,9 +613,9 @@
 
       Array.prototype.forEach.call(items, function(li){
         pintarLimite(li, fecha);
-        if(li.querySelector("input").checked) ok++;
+        if(li.querySelector("input[type=checkbox]").checked) ok++;
       });
-      completas += ok;
+      completas += ok; total += n;
 
       var pctDia = n ? Math.round(ok * 100 / n) : 0;
       card.querySelector("[data-count]").textContent = n
@@ -497,10 +626,12 @@
       card.querySelector("ul").classList.toggle("vacio", n === 0);
     });
 
-    var pct = TOTAL ? Math.round(completas * 100 / TOTAL) : 0;
+    var pct = total ? Math.round(completas * 100 / total) : 0;
     pctEl.textContent = pct + "%";
-    fracEl.textContent = "(" + completas + " / " + TOTAL + ")";
+    fracEl.textContent = "(" + completas + " / " + total + ")";
     barFill.style.width = pct + "%";
+    subtitulo.textContent = "Plan de estudio distribuido · " + total +
+      " actividades en " + FECHAS.length + " días";
   }
 
   function guardarOrden(){
@@ -515,8 +646,25 @@
     });
     layout = nuevo;
     escribir(KEY_LAYOUT, layout);
+    // Las añadidas recuerdan su nuevo día por si hay que recolocarlas
+    FECHAS.forEach(function(f){
+      layout[f].forEach(function(id){
+        if(TAREAS[id] && TAREAS[id].custom) TAREAS[id].dia = f;
+      });
+    });
+    guardarExtras();
     actualizar();
     aplicarFiltro();
+  }
+
+  function guardarExtras(){
+    var lista = [];
+    Object.keys(TAREAS).forEach(function(id){
+      var t = TAREAS[id];
+      if(t.custom) lista.push({ id:t.id, m:t.m, t:t.t, tipo:t.tipo, limite:t.limite, dia:t.dia });
+    });
+    extras = lista;
+    escribir(KEY_EXTRA, extras);
   }
 
   // ---- Filtros que resaltan -----------------------------------------------
@@ -540,7 +688,7 @@
 
     if(!activo){ resultado.textContent = ""; return; }
     var partes = [];
-    if(filtroTipo) partes.push(TIPOS[filtroTipo].et.toLowerCase());
+    if(filtroTipo) partes.push((TIPOS[filtroTipo] || TIPOS.otro).et.toLowerCase());
     if(filtroMateria) partes.push(filtroMateria);
     resultado.textContent = hits + (hits === 1 ? " actividad" : " actividades") +
                             " · " + partes.join(" · ");
@@ -550,22 +698,8 @@
     var filaTipo = document.getElementById("filtroTipo");
     var filaMat  = document.getElementById("filtroMateria");
 
-    function chip(fila, texto, valor, grupo, conteo){
-      var b = document.createElement("button");
-      b.type = "button";
-      b.className = "chip";
-      b.dataset.grupo = grupo;
-      b.dataset.valor = valor;
-      b.innerHTML = texto + (conteo != null ? ' <span class="pt">' + conteo + '</span>' : '');
-      b.addEventListener("click", function(){
-        if(grupo === "tipo")    filtroTipo    = (filtroTipo    === valor) ? "" : valor;
-        else                    filtroMateria = (filtroMateria === valor) ? "" : valor;
-        pintarChips();
-        aplicarFiltro();
-      });
-      fila.appendChild(b);
-      return b;
-    }
+    // Se reconstruyen al añadir/eliminar para reflejar materias y tipos nuevos
+    Array.prototype.forEach.call(document.querySelectorAll(".chip"), function(c){ c.remove(); });
 
     var porTipo = {}, porMateria = {};
     Object.keys(TAREAS).forEach(function(id){
@@ -574,12 +708,37 @@
       porMateria[t.m] = (porMateria[t.m] || 0) + 1;
     });
 
+    function chip(fila, texto, valor, grupo, conteo){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "chip";
+      b.dataset.grupo = grupo;
+      b.dataset.valor = valor;
+      b.appendChild(document.createTextNode(texto + " "));
+      var s = document.createElement("span");
+      s.className = "pt";
+      s.textContent = conteo;
+      b.appendChild(s);
+      b.addEventListener("click", function(){
+        if(grupo === "tipo") filtroTipo    = (filtroTipo    === valor) ? "" : valor;
+        else                 filtroMateria = (filtroMateria === valor) ? "" : valor;
+        pintarChips();
+        aplicarFiltro();
+      });
+      fila.appendChild(b);
+    }
+
     Object.keys(TIPOS).forEach(function(k){
       if(porTipo[k]) chip(filaTipo, TIPOS[k].et, k, "tipo", porTipo[k]);
     });
-    [ES, CC, F2, DER, ET].forEach(function(m){
-      chip(filaMat, m, m, "materia", porMateria[m]);
+    materias().forEach(function(m){
+      if(porMateria[m]) chip(filaMat, m, m, "materia", porMateria[m]);
     });
+
+    // Si el filtro activo se quedó sin actividades, se apaga
+    if(filtroTipo && !porTipo[filtroTipo]) filtroTipo = "";
+    if(filtroMateria && !porMateria[filtroMateria]) filtroMateria = "";
+    pintarChips();
   }
 
   function pintarChips(){
@@ -590,7 +749,129 @@
     });
   }
 
-  // ---- Eventos -------------------------------------------------------------
+  // ---- Añadir / eliminar actividades --------------------------------------
+
+  var panel        = document.getElementById("panelNueva");
+  var inNombre     = document.getElementById("nvNombre");
+  var inMateria    = document.getElementById("nvMateria");
+  var campoMatNva  = document.getElementById("campoMateriaNueva");
+  var inMatTexto   = document.getElementById("nvMateriaTexto");
+  var inTipo       = document.getElementById("nvTipo");
+  var inDia        = document.getElementById("nvDia");
+  var inLimite     = document.getElementById("nvLimite");
+  var avisoForm    = document.getElementById("avisoForm");
+
+  function llenarSelects(){
+    inMateria.innerHTML = "";
+    materias().forEach(function(m){
+      var op = document.createElement("option");
+      op.value = m; op.textContent = m;
+      inMateria.appendChild(op);
+    });
+    var opNueva = document.createElement("option");
+    opNueva.value = "__nueva__";
+    opNueva.textContent = "+ Otra materia…";
+    inMateria.appendChild(opNueva);
+
+    if(!inTipo.options.length){
+      Object.keys(TIPOS).forEach(function(k){
+        var op = document.createElement("option");
+        op.value = k; op.textContent = TIPOS[k].et;
+        inTipo.appendChild(op);
+      });
+      FECHAS.forEach(function(f){
+        var info = etiquetaFecha(f);
+        var op = document.createElement("option");
+        op.value = f;
+        op.textContent = info.dia + " de " + info.mes + " (" + info.dow + ")";
+        inDia.appendChild(op);
+      });
+      inLimite.min = FECHAS[0];
+    }
+  }
+
+  inMateria.addEventListener("change", function(){
+    var nueva = inMateria.value === "__nueva__";
+    campoMatNva.style.display = nueva ? "flex" : "none";
+    if(nueva) inMatTexto.focus();
+  });
+
+  function abrirPanel(){
+    llenarSelects();
+    panel.classList.add("abierta");
+    avisoForm.textContent = "";
+    // Sugiere el día con menos actividades
+    var menor = FECHAS[0];
+    FECHAS.forEach(function(f){ if(layout[f].length < layout[menor].length) menor = f; });
+    inDia.value = menor;
+    inNombre.focus();
+    panel.scrollIntoView({ behavior:"smooth", block:"nearest" });
+  }
+  function cerrarPanel(){
+    panel.classList.remove("abierta");
+    inNombre.value = ""; inMatTexto.value = ""; inLimite.value = "";
+    campoMatNva.style.display = "none";
+    avisoForm.textContent = "";
+  }
+
+  function anadirActividad(){
+    var nombre = inNombre.value.trim();
+    if(!nombre){
+      avisoForm.textContent = "Escribe el nombre de la actividad.";
+      inNombre.focus();
+      return;
+    }
+    var materia = inMateria.value;
+    if(materia === "__nueva__"){
+      materia = inMatTexto.value.trim();
+      if(!materia){
+        avisoForm.textContent = "Escribe el nombre de la materia nueva.";
+        inMatTexto.focus();
+        return;
+      }
+    }
+    var dia = inDia.value;
+    var id  = "extra-" + Date.now() + "-" + Math.floor(Math.random() * 1000);
+
+    def(id, materia, nombre, inTipo.value, inLimite.value || null, true, dia);
+    layout[dia].push(id);
+    escribir(KEY_LAYOUT, layout);
+    guardarExtras();
+
+    cerrarPanel();
+    construirFiltros();
+    render();
+
+    var li = document.querySelector('li[data-id="' + id + '"]');
+    if(li) li.scrollIntoView({ behavior:"smooth", block:"center" });
+  }
+
+  function eliminarExtra(id){
+    var tarea = TAREAS[id];
+    if(!tarea || !tarea.custom) return;
+    if(!confirm('¿Eliminar "' + tarea.t + '" del calendario?')) return;
+
+    delete TAREAS[id];
+    delete hechas[id];
+    FECHAS.forEach(function(f){
+      layout[f] = layout[f].filter(function(x){ return x !== id; });
+    });
+    escribir(KEY_LAYOUT, layout);
+    escribir(KEY_DONE, hechas);
+    guardarExtras();
+    construirFiltros();
+    render();
+  }
+
+  document.getElementById("btnNueva").addEventListener("click", function(){
+    if(panel.classList.contains("abierta")) cerrarPanel();
+    else abrirPanel();
+  });
+  document.getElementById("btnGuardarNueva").addEventListener("click", anadirActividad);
+  document.getElementById("btnCancelarNueva").addEventListener("click", cerrarPanel);
+  inNombre.addEventListener("keydown", function(ev){ if(ev.key === "Enter") anadirActividad(); });
+
+  // ---- Eventos del calendario ---------------------------------------------
 
   contenedor.addEventListener("change", function(ev){
     var el = ev.target;
@@ -689,12 +970,13 @@
   });
 
   document.getElementById("btnOrden").addEventListener("click", function(){
-    if(!confirm("¿Volver a la distribución sugerida? Tus actividades marcadas se conservan.")) return;
-    layout = clonar(ORDEN_SUGERIDO);
+    if(!confirm("¿Volver a la distribución sugerida? Tus actividades marcadas y las que añadiste se conservan.")) return;
+    layout = sanear(clonar(ORDEN_SUGERIDO));
     escribir(KEY_LAYOUT, layout);
     render();
   });
 
+  llenarSelects();
   construirFiltros();
   render();
 })();
