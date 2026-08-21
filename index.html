@@ -229,6 +229,7 @@
     <button type="button" id="btnLimpiar">Quitar filtros</button>
     <button type="button" id="btnToday">Ir a hoy</button>
     <button type="button" id="btnOrden">Restaurar orden sugerido</button>
+    <button type="button" id="btnExportar">Exportar mi progreso</button>
     <span id="resultado"></span>
     <span class="hint">Arrastra las tareas entre días o usa el selector de fecha de cada tarea.</span>
   </div>
@@ -268,6 +269,11 @@
     <span id="avisoForm"></span>
   </div>
 </section>
+
+<div class="acciones" style="max-width:960px;margin:10px auto 0;padding:0 16px;display:block">
+  <p id="avisoExport" class="hint" style="display:none;margin:0 0 6px"></p>
+  <textarea id="salidaExport" readonly rows="3" style="display:none;width:100%;font:12px/1.4 monospace;border:1px solid var(--line);border-radius:10px;padding:8px;background:#fff;color:var(--text)"></textarea>
+</div>
 
 <main id="calendario"></main>
 
@@ -968,6 +974,45 @@
     var card = document.getElementById("dia-" + iso) || contenedor.firstElementChild;
     if(card) card.scrollIntoView({ behavior:"smooth", block:"start" });
   });
+
+  /* Exporta lo hecho, el reparto y las actividades anadidas, para pegarlo
+     en el Panel Academico (Ajustes -> Importar progreso del calendario). */
+  document.getElementById("btnExportar").addEventListener("click", function(){
+    var payload = { app:"calendario-agosto-2026", exportado:new Date().toISOString(),
+                    hechas:[], plan:[], extras:[] };
+
+    FECHAS.forEach(function(f){
+      layout[f].forEach(function(id){
+        var t = TAREAS[id];
+        if(!t) return;
+        var limpio = String(t.t).replace(/\s*\((?:limite|límite)[^)]*\)\s*$/i, "").trim();
+        payload.plan.push({ m:t.m, t:limpio, dia:f });
+        if(hechas[id]) payload.hechas.push({ m:t.m, t:limpio });
+        if(t.custom) payload.extras.push({ m:t.m, t:limpio, tipo:t.tipo,
+                                           limite:t.limite || null, dia:f, hecha:!!hechas[id] });
+      });
+    });
+
+    var texto = JSON.stringify(payload);
+    var salida = document.getElementById("salidaExport");
+    salida.value = texto;
+    salida.style.display = "block";
+    salida.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch(e){}
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(texto).then(function(){ avisarExport(true); },
+                                                function(){ avisarExport(ok); });
+    } else avisarExport(ok);
+  });
+
+  function avisarExport(copiado){
+    var el = document.getElementById("avisoExport");
+    el.textContent = copiado
+      ? "Copiado. Pegalo en el Panel Academico -> Ajustes -> Importar progreso del calendario."
+      : "Selecciona el texto de abajo y copialo (Ctrl+C).";
+    el.style.display = "block";
+  }
 
   document.getElementById("btnOrden").addEventListener("click", function(){
     if(!confirm("¿Volver a la distribución sugerida? Tus actividades marcadas y las que añadiste se conservan.")) return;
